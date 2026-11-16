@@ -55,6 +55,14 @@ class CampusMedicalDemoStack(Stack):
             code=lambda_.DockerImageCode.from_image_asset(
                 str(repository_root),
                 file="Dockerfile.lambda",
+                exclude=[
+                    ".git",
+                    ".git/**",
+                    ".venv",
+                    ".venv/**",
+                    "infra/cdk/cdk.out",
+                    "infra/cdk/cdk.out/**",
+                ],
             ),
             timeout=Duration.seconds(28),
             memory_size=1024,
