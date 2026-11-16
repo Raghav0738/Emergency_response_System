@@ -40,8 +40,24 @@ class CampusMedicalDemoStack(Stack):
                 exclude_punctuation=True,
             ),
         )
-        data = dynamodb.Table(self, "DemoData", partition_key=dynamodb.Attribute(name="pk", type=dynamodb.AttributeType.STRING), sort_key=dynamodb.Attribute(name="sk", type=dynamodb.AttributeType.STRING), billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST, removal_policy=RemovalPolicy.DESTROY)
-        ledger = dynamodb.Table(self, "IdempotencyLedger", partition_key=dynamodb.Attribute(name="request_key", type=dynamodb.AttributeType.STRING), time_to_live_attribute="expires_at", billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST, removal_policy=RemovalPolicy.DESTROY)
+        data = dynamodb.Table(
+            self,
+            "DemoData",
+            partition_key=dynamodb.Attribute(name="pk", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="sk", type=dynamodb.AttributeType.STRING),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            deletion_protection=True,
+            removal_policy=RemovalPolicy.RETAIN,
+        )
+        ledger = dynamodb.Table(
+            self,
+            "IdempotencyLedger",
+            partition_key=dynamodb.Attribute(name="request_key", type=dynamodb.AttributeType.STRING),
+            time_to_live_attribute="expires_at",
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            deletion_protection=True,
+            removal_policy=RemovalPolicy.RETAIN,
+        )
         repository_root = Path(__file__).resolve().parents[2]
         api_log_group = logs.LogGroup(
             self,
