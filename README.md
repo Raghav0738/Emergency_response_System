@@ -8,7 +8,7 @@
 [![AWS ECS](https://img.shields.io/badge/AWS_ECS-Fargate-orange.svg)](https://aws.amazon.com/fargate/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A FastAPI application for requesting and tracking campus medical assistance, designed for **AWS ECS Fargate + RDS** deployment. The incident model remains in the API; the web interface creates and lists medical requests.
+A FastAPI application for requesting and tracking campus medical assistance. The legacy full-stack deployment uses **AWS ECS Fargate + RDS**; the separate, low-cost course demo in `infra/cdk` uses **Lambda + API Gateway + DynamoDB** with simulated notifications. The incident model remains in the API; the web interface creates and lists medical requests.
 
 ## Medical emergency flow (new)
 
@@ -28,7 +28,7 @@ The browser app is a project prototype until the college supplies a staffed duty
 
 ### Cloud computing architecture
 
-See [docs/CLOUD-ARCHITECTURE.md](docs/CLOUD-ARCHITECTURE.md) for the ECS, RDS, SQS, SNS, worker, migration, and monitoring path. The API and worker use the same container image with different commands. Run `alembic upgrade head` as a one-off deployment task before starting production services. Local SQLite startup creates tables for development; production startup requires the migrated schema.
+See [docs/CLOUD-ARCHITECTURE.md](docs/CLOUD-ARCHITECTURE.md) for the legacy ECS, RDS, SQS, SNS, worker, migration, and monitoring path. The separate low-cost course demo is defined in `infra/cdk`; it builds this repository's Lambda image into the target account's CDK ECR asset repository and uses DynamoDB. Local SQLite startup creates tables for development; production startup requires the migrated schema.
 
 ---
 

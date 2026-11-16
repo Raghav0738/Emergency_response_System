@@ -46,63 +46,9 @@ jobs:
       # Create a production config if API URL is provided
       - name: Create production config
         if: github.event.inputs.api_url != ''
-        run: |
-          cat > frontend/config.production.js << 'EOF'
-          // Auto-generated production config - DO NOT EDIT MANUALLY
-          window.CER_CONFIG = {
-            API_BASE_URL: '${{ github.event.inputs.api_url }}',
-            API_VERSION: '/api/v1',
-            FEATURES: {
-              ENABLE_GEOLOCATION: true,
-              ENABLE_NOTIFICATIONS: true,
-            },
-            BUILD: {
-              VERSION: '1.0.0',
-              BUILD_TIME: '$(date -u +%Y-%m-%dT%H:%M:%SZ)',
-              ENVIRONMENT: 'production',
-            },
-            getApiUrl(path) {
-              const base = this.API_BASE_URL || window.location.origin;
-              const version = this.API_VERSION;
-              return `${base}${version}${path}`;
-            },
-            isApiConfigured() {
-              return Boolean(this.API_BASE_URL) || !window.location.hostname.endsWith('.github.io');
-            },
-            init() {
-              const urlParams = new URLSearchParams(window.location.search);
-              const apiUrlParam = urlParams.get('api_url');
-              const localPage = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
-              const localApi = (value) => { try { const u = new URL(value); return ['http:', 'https:'].includes(u.protocol) && ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname) && !u.username && !u.password; } catch (e) { return false; } };
-              if (localPage && apiUrlParam && localApi(apiUrlParam)) {
-                this.API_BASE_URL = apiUrlParam;
-              }
-              try {
-                const stored = localStorage.getItem('cer_api_url');
-                if (localPage && stored && !apiUrlParam && localApi(stored)) {
-                  this.API_BASE_URL = stored;
-                }
-              } catch (e) {}
-              console.log('[CER_CONFIG] Production config loaded:', {
-                API_BASE_URL: this.API_BASE_URL || '(same origin)',
-                ENVIRONMENT: this.BUILD.ENVIRONMENT,
-              });
-              return this;
-            },
-            setApiUrl(url) {
-              const parsed = new URL(url);
-              if (!['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname) || !['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname) || !['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) throw new Error('API overrides are only available for local development');
-              this.API_BASE_URL = url.replace(/\/$/, '');
-              try { localStorage.setItem('cer_api_url', this.API_BASE_URL); } catch (e) {}
-            },
-            clearApiUrl() {
-              this.API_BASE_URL = '';
-              try { localStorage.removeItem('cer_api_url'); } catch (e) {}
-            }
-          };
-          window.CER_CONFIG.init();
-          EOF
-          echo "Production config created"
+        env:
+          API_BASE_URL: ${{ github.event.inputs.api_url }}
+        run: node scripts/create-pages-config.js
 
       # Copy frontend files to build output
       - name: Prepare build artifacts
