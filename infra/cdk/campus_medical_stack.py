@@ -3,7 +3,7 @@ from pathlib import Path
 
 from aws_cdk import CfnOutput, CfnParameter, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_apigatewayv2 as apigwv2, aws_dynamodb as dynamodb
-from aws_cdk import aws_lambda as lambda_, aws_logs as logs, aws_secretsmanager as secretsmanager
+from aws_cdk import aws_ecr_assets as ecr_assets, aws_lambda as lambda_, aws_logs as logs, aws_secretsmanager as secretsmanager
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from constructs import Construct
 
@@ -52,9 +52,11 @@ class CampusMedicalDemoStack(Stack):
         fn = lambda_.DockerImageFunction(
             self,
             "ApiFunction",
+            architecture=lambda_.Architecture.X86_64,
             code=lambda_.DockerImageCode.from_image_asset(
                 str(repository_root),
                 file="Dockerfile.lambda",
+                platform=ecr_assets.Platform.LINUX_AMD64,
                 exclude=[
                     ".git",
                     ".git/**",

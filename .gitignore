@@ -75,7 +75,6 @@ pip-wheel-metadata/
 # Docker
 .docker/
 docker-compose.override.yml
-.dockerignore
 
 # Terraform
 *.tfstate

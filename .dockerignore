@@ -1,0 +1,9 @@
+*
+!Dockerfile.lambda
+!requirements.txt
+!app/
+!app/**
+!frontend/
+!frontend/**
+app/**/__pycache__/
+app/**/*.py[cod]

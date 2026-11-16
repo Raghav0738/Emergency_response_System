@@ -1,6 +1,11 @@
-# AWS Deployment Guide for Campus Medical Assistance
+# Legacy AWS Deployment Guide: ECS Fargate and RDS
 
-This guide walks you through deploying the Campus Medical Assistance application to AWS using ECS Fargate.
+> **This guide describes the legacy ECS/RDS deployment, not the low-cost college demo.**
+> It provisions a VPC, NAT, ECS Fargate, RDS PostgreSQL, Redis, EFS, and other
+> resources that can incur substantial ongoing charges. For the isolated demo,
+> use the pay-per-request Lambda, API Gateway, and DynamoDB stack in `infra/cdk`.
+
+The procedures below are retained for the separate legacy deployment only.
 
 ## 📋 Prerequisites
 
