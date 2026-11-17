@@ -43,11 +43,10 @@ jobs:
           ls -la frontend/
           echo "Frontend files verified"
 
-      # Create a production config if API URL is provided
+      # Use the deployed demo API by default; allow a manual override.
       - name: Create production config
-        if: github.event.inputs.api_url != ''
         env:
-          API_BASE_URL: ${{ github.event.inputs.api_url }}
+          API_BASE_URL: ${{ github.event.inputs.api_url || 'https://e58d3d3oob.execute-api.ap-south-1.amazonaws.com' }}
         run: node scripts/create-pages-config.js
 
       # Copy frontend files to build output
@@ -112,7 +111,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Configuration" >> $GITHUB_STEP_SUMMARY
           echo "- Frontend: Static SPA (medical.html + medical.js + config.js)" >> $GITHUB_STEP_SUMMARY
-          echo "- API Base URL: ${{ github.event.inputs.api_url || 'Same origin (relative paths)' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- API Base URL: ${{ github.event.inputs.api_url || 'https://e58d3d3oob.execute-api.ap-south-1.amazonaws.com' }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
           echo "1. Ensure your backend API is deployed and accessible" >> $GITHUB_STEP_SUMMARY

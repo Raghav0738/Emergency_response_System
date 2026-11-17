@@ -12,6 +12,7 @@ app = cdk.App()
 CampusMedicalDemoStack(
     app,
     "CampusMedicalDemo",
+    termination_protection=True,
     env=cdk.Environment(
         account=os.environ.get("CDK_DEFAULT_ACCOUNT"),
         region=os.environ.get("CDK_DEFAULT_REGION"),

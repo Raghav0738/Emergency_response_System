@@ -1,4 +1,5 @@
 ﻿from contextlib import asynccontextmanager
+import os
 from pathlib import Path
 from fastapi import FastAPI, Request, Response, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -295,7 +296,16 @@ async def health(request: Request):
     db_healthy = False
     db_error = None
     try:
-        if settings.data_api_enabled:
+        if settings.dynamo_demo_enabled:
+            import boto3
+
+            table_names = ("DEMO_DATA_TABLE", "IDEMPOTENCY_TABLE")
+            if not all(os.getenv(name) for name in table_names):
+                raise RuntimeError("Demo DynamoDB table names are not configured")
+            client = boto3.client("dynamodb")
+            for name in table_names:
+                client.describe_table(TableName=os.environ[name])
+        elif settings.data_api_enabled:
             from app.data_api_repository import get_repo
             get_repo().query("SELECT 1")
         else:

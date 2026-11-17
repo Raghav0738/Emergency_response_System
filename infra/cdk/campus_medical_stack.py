@@ -1,9 +1,9 @@
 """Low-cost, pay-per-request campus medical demo infrastructure."""
 from pathlib import Path
 
-from aws_cdk import CfnOutput, CfnParameter, Duration, RemovalPolicy, Stack
+from aws_cdk import CfnOutput, CfnParameter, Duration, RemovalPolicy, Stack, Tags
 from aws_cdk import aws_apigatewayv2 as apigwv2, aws_dynamodb as dynamodb
-from aws_cdk import aws_ecr_assets as ecr_assets, aws_lambda as lambda_, aws_logs as logs, aws_secretsmanager as secretsmanager
+from aws_cdk import aws_ecr_assets as ecr_assets, aws_iam as iam, aws_lambda as lambda_, aws_logs as logs, aws_secretsmanager as secretsmanager
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from constructs import Construct
 
@@ -11,6 +11,11 @@ from constructs import Construct
 class CampusMedicalDemoStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
+        Tags.of(self).add(
+            "Project",
+            "CampusMedicalDemo",
+            exclude_resource_types=["AWS::ApiGatewayV2::Stage"],
+        )
         pages_origin = CfnParameter(
             self,
             "PagesOrigin",
@@ -65,9 +70,25 @@ class CampusMedicalDemoStack(Stack):
             retention=logs.RetentionDays.ONE_WEEK,
             removal_policy=RemovalPolicy.DESTROY,
         )
+        execution_role = iam.Role(
+            self,
+            "ApiExecutionRole",
+            assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
+            permissions_boundary=iam.ManagedPolicy.from_managed_policy_name(
+                self,
+                "LambdaPermissionsBoundary",
+                "CampusMedicalDemoLambdaBoundary",
+            ),
+            managed_policies=[
+                iam.ManagedPolicy.from_aws_managed_policy_name(
+                    "service-role/AWSLambdaBasicExecutionRole"
+                )
+            ],
+        )
         fn = lambda_.DockerImageFunction(
             self,
             "ApiFunction",
+            role=execution_role,
             architecture=lambda_.Architecture.X86_64,
             code=lambda_.DockerImageCode.from_image_asset(
                 str(repository_root),

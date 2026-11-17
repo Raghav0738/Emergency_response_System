@@ -1,0 +1,62 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DemoDataAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-south-1:939423308052:table/CampusMedicalDemo-DemoData61149C2F-*"
+    },
+    {
+      "Sid": "IdempotencyLedgerAccess",
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem"
+      ],
+      "Resource": "arn:aws:dynamodb:ap-south-1:939423308052:table/CampusMedicalDemo-IdempotencyLedger50CBD3D8-*"
+    },
+    {
+      "Sid": "ReadDemoSecrets",
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": [
+        "arn:aws:secretsmanager:ap-south-1:939423308052:secret:ApplicationSecret25AD4F13-*",
+        "arn:aws:secretsmanager:ap-south-1:939423308052:secret:BootstrapAdminA3E453FC-*"
+      ]
+    },
+    {
+      "Sid": "WriteDemoLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup"
+      ],
+      "Resource": "arn:aws:logs:ap-south-1:939423308052:log-group:CampusMedicalDemo-*"
+    },
+    {
+      "Sid": "WriteDemoLogStreams",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:ap-south-1:939423308052:log-group:CampusMedicalDemo-*:*"
+    }
+  ]
+}
